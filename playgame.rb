@@ -57,7 +57,7 @@ class WorldState
       respond "How cute! It's a tiny little garden! There's a sign in the middle of the garden with some words scrawled on it"
       @player_state[:location] = "garden"
     elsif action == "go" && noun == "east"
-      respond "You've reached a dock. There is a boat on the dock. You can make out a soft glow across the water. Seems like there's land! You stick your toe in the water. It's far too cold for you to swim in... you'd die."
+      respond "You've reached a dock. You stick your toe in the water. It's far too cold for you to swim in... you'd die."
       @player_state[:location] = "boat"
     elsif action == "go" && noun == "west"
       respond "It looks like something crashed here. There is a long skid mark on the ground that ends in a big mound of dirt"
@@ -99,13 +99,13 @@ class WorldState
     elsif action == "go" && noun == "west"
       respond "Nothing to see here... this wall seems unstable.. better move away fast!"
     elsif action == "examine" && noun == "bag"
-      respond "There's a tube of glue in here. You pocket it."
+      respond "There's a tube of glue in here. You pocket it. Why on earth would you need that?"
       @player_state[:glue] = 1
     elsif action == "examine" && (noun == "ground" || noun == "board" || noun == "boards")
-      respond "You pick up the wood you find on the ground. Must you collect everything?"
+      respond "You pick up the wood you find on the ground. .. this is a strange habit you have..."
       @player_state[:wood] = 1
      else
-      respond "I only understand commands that start with \"go\" or \"examine\". WHAT?! HOW DARE YOU SUGGEST I\'M NOT BRIGHT!"
+      respond "I mostly only understand commands that start with \"go\" or \"examine\". WHAT?! HOW DARE YOU SUGGEST I\'M NOT SMART!"
      end
   end
 
@@ -121,7 +121,7 @@ class WorldState
       respond "You're blocked off by a mound of faintly glowing rocks"
     elsif action == "examine" && noun == "sign"
       respond "You pick your footing around the growing plants to reach the sign. \nWe gave you a sign \nTo water the plants \nWe didn't mean that way \nNow zip up your pants."
-      respond "Is someone watching me?!"
+      respond "WHAT?! Was someone watching me?!"
     elsif action == "examine" && (noun == "dirt"||noun == "ground")
       respond "What's this hammer lying here? You take it. I believe that is STEALING."
       @player_state[:hammer] = 1
@@ -142,7 +142,7 @@ class WorldState
       @player_state[:location] = "startpoint"
     #Todo - fix this, causing nil class error when user enters go east
     elsif action == "examine" && noun == "boat" && @player_state[:wood] == 1 && @player_state[:nails] == 1 && @player_state[:hammer] == 1 && @player_state[:glue] == 1 && @player_state[:response] == 1
-      respond "OH! You can use the wood, nails, glue, and hammer you collected to patch up this boat! Aren't you glad I told you to pick those things up now?"
+      respond "OH! You can use the wood, nails, glue, and hammer you collected to patch up this boat! Aren't you glad I kindly told you to pick those things up now?"
       @player_state[:location] = "lake"
     elsif action == "examine" && noun == "boat"
       respond "You see a note pinned on the side"
@@ -159,24 +159,51 @@ class WorldState
     if action == "go" && noun == "north"
       respond "The area seems to be blocked off by large faintly glowing rocks in the water."
     elsif action == "go" && noun == "south"
-      respond "This area seems to be blocked off by some large boulders in the water.. there seem to be boulders everywhere"
+      respond "This area is blocked off by some large boulders in the water.. there seem to be boulders everywhere"
     elsif action == "go" && noun == "east" && @player_state[:song] == 1
       respond "Your boat rocks a bit as it gently hits land. You get off the boat. Is that coffee I smell? You see the soft red glow of a smoldering fire off to the east"
+      @player_state[:location] = "camp"
     elsif action == "go" && noun == "east"
-      respond "You push off your boat from the dock. A warbling sound drifting down the lake. I think someone is singing."
-      respond "The big fish eats the tiny fish, \nThe big fish east the little fish-- \nSo only the biggest fish get fat. \nDo you know any folks like that?"
+      respond "You get in the boat and push off from the dock. A warbling sound drifts across the lake. I think someone is singing."
+      respond "The big fish eats the tiny fish, \nThe big fish eats the little fish-- \nSo only the biggest fish get fat. \nDo you know any folks like that?"
       respond "... so strange..."
       @player_state[:song] = 1
     elsif action == "go" && noun == "west"
-      respond "You head back towards the dock"
-      @playerstate [:location] = "boat"
+      respond "You can't head back to the dock, looks like you're stuck!"
     else
       respond "Which direction would you like to go?"
     end
   end
 
+  def camp(action, noun)
+    if action == "go" && noun == "north"
+      respond "You're blocked off by rocks. These stupid rocks are everywhere."
+    elsif action == "go" && noun == "south"
+      respond "You're blocked off by rocks."
+    elsif action == "go" && noun == "east"
+      respond "You reach the fire. Looks like it was only recently put out! There is a bowl of stew and a kettle with some liquid in it"
+    elsif action == "examine" && noun == "stew"
+      respond "Smells good. Looks like whoever made this just threw in a hodgepodge of whatever scraps of food they had. I'm not tasting that for you!"
+    elsif action == "examine" && noun == "kettle"
+      respond "IT'S COFFEE!! .. I'll take that..."
+    elsif action == "go" && noun == "west"
+      respond "You head back onto the lake"
+      @player_state[:location] = "lake"
+    elsif (action == "eat" || action == "taste") && noun == "stew"
+      @player_state[:dysentery] = true
+    elsif action == "examine" && noun == "ground"
+      respond "That's weird, did this feather just fall from the sky?"
+    elsif action == "examine" && noun == "sky"
+      @player_state[:finish] = true
+    else
+      respond "What would you like to do?"
+    end
+  end
+
+
   def respond(response)
-  #  puts "player_state #{@player_state}"
+  #for debugging purposes
+  #puts "player_state #{@player_state}"
     puts "#{response}\n\n"
   end
 end
@@ -190,7 +217,20 @@ puts "What would you like to do? \n"
 
 world_state = WorldState.new()
 
+#if command = gets.chomp = ("eat stew" || "taste stew")
+#  puts "You die of dysentery. Game Over, thank you for playing"
+# end
 
 while command = gets.chomp
-  world_state = world_state.process_command(command)
+world_state = world_state.process_command(command)
+ if world_state.player_state[:dysentery] == true
+   puts "You die of dysentery. Game Over. Thank you for playing"
+   break
+ elsif world_state.player_state[:finish] == true
+   puts "You hear some quickly approaching sounds. A large object flies by over your head. It's shortly followed by some happy screaming and three voices pipe up"
+   puts "\"HOORAY!\" \n\"WHAT FUN!\" \n\"IT'S TIME WE FLEW!\""
+   puts "cried Ickle me, Pickle me, Tickle me too"
+   puts "What a bunch of weirdos. Let's eat this stew."
+   break
+ end
 end
