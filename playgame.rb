@@ -217,10 +217,6 @@ puts "What would you like to do? \n"
 
 world_state = WorldState.new()
 
-#if command = gets.chomp = ("eat stew" || "taste stew")
-#  puts "You die of dysentery. Game Over, thank you for playing"
-# end
-
 while command = gets.chomp
 world_state = world_state.process_command(command)
  if world_state.player_state[:dysentery] == true
