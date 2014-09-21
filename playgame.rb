@@ -95,9 +95,9 @@ class WorldState
       respond "Upon closer inspection they look to be crayon drawings of gibberish. One drawing looks like someone attempted to draw something that looks like a cat.. unicorn. The last drawing has some words on it. You read it.
       \nNow I lay me down to sleep \nI pray the Lord my soul to keep \nAnd if I die before I wake, \nI pray the Lord my toys to break. \nSo none of the other kids can use 'em \nAmen"
     elsif action == "go" && noun == "east"
-      respond "You walk up to the east wall of the shack. There are some papers fluttering on the wall."
+      respond "You face the east wall of the shack. There are some papers fluttering on the wall."
     elsif action == "go" && noun == "west"
-      respond "Nothing to see here... this wall seems unstable.. better move away fast!"
+      respond "You face the west wall. Nothing to see here... this wall seems unstable.. better move away fast!"
     elsif action == "examine" && noun == "bag"
       respond "There's a tube of glue in here. You pocket it. Why on earth would you need that?"
       @player_state[:glue] = 1
